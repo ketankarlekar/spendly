@@ -34,7 +34,7 @@ Built with Flask and SQLite.
 
 2. Create and activate a virtual environment:
    ```bash
-   python -m venv venv
+   python3 -m venv venv
    # Windows
    venv\Scripts\activate
    # Mac/Linux
@@ -48,7 +48,7 @@ Built with Flask and SQLite.
 
 4. Run the app:
    ```bash
-   python app.py
+   python3 app.py
    ```
 
 5. Open your browser and go to `http://127.0.0.1:5001`
