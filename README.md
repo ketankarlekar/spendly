@@ -14,7 +14,7 @@ Built with Flask and SQLite.
 
 ## Tech Stack
 
-- **Backend:** Python, Flask
+- **Backend:** Python 3, Flask
 - **Database:** SQLite
 - **Frontend:** HTML, CSS, JavaScript (Jinja2 templates)
 
