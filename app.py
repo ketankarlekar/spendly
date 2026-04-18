@@ -1,3 +1,4 @@
+
 from flask import Flask, render_template
 
 app = Flask(__name__)
@@ -20,6 +21,11 @@ def register():
 @app.route("/login")
 def login():
     return render_template("login.html")
+
+
+@app.route("/terms")
+def terms():
+    return render_template("terms.html")
 
 
 # ------------------------------------------------------------------ #
