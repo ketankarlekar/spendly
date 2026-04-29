@@ -53,27 +53,59 @@ Built with Flask and SQLite.
 
 5. Open your browser and go to `http://127.0.0.1:5001`
 
+## Opening `spendly.db`
+
+`spendly.db` is a SQLite database file, so it will not open as a normal text file.
+
+- No extra Python dependency is required for SQLite because Python includes `sqlite3`.
+- To inspect the database from this project, run:
+  ```bash
+  python inspect_db.py
+  ```
+- To open it in the SQLite shell, run:
+  ```bash
+  sqlite3 spendly.db
+  ```
+  Then try `.tables` or `SELECT * FROM expenses;`
+
 ## Project Structure
 
 ```
 spendly/
-├── app.py                  # Flask app and routes
+├── app.py                  # Flask app and all routes
 ├── requirements.txt
 ├── database/
 │   ├── __init__.py
-│   └── db.py               # Database connection and setup
+│   └── db.py               # get_db(), init_db(), seed_db()
 ├── static/
-│   ├── css/style.css
-│   └── js/main.js
-└── templates/
-    ├── base.html
-    ├── landing.html
-    ├── login.html
-    └── register.html
+│   ├── css/
+│   │   ├── style.css       # Global styles
+│   │   └── landing.css     # Landing page only
+│   └── js/
+│       └── main.js
+├── templates/
+│   ├── base.html           # Shared layout
+│   ├── landing.html
+│   ├── login.html
+│   ├── register.html
+│   ├── privacy.html
+│   └── terms.html
+└── tests/
+    └── conftest.py         # Pytest fixtures
 ```
 
 ## Running Tests
 
 ```bash
+# Run all tests
 pytest
+
+# Run a specific test file
+pytest tests/test_foo.py
+
+# Filter by test name
+pytest -k "test_login"
+
+# Show print output
+pytest -s
 ```
