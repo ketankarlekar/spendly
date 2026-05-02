@@ -1,0 +1,284 @@
+/* ------------------------------------------------------------------ */
+/* Profile page layout                                                  */
+/* ------------------------------------------------------------------ */
+
+.profile-container {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* ------------------------------------------------------------------ */
+/* User info card                                                        */
+/* ------------------------------------------------------------------ */
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    background: var(--paper-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 2rem;
+}
+
+.avatar {
+    flex-shrink: 0;
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--paper-card);
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: 0.02em;
+}
+
+.profile-name {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    color: var(--ink);
+    margin: 0 0 0.25rem;
+}
+
+.profile-email {
+    color: var(--ink-muted);
+    margin: 0 0 0.15rem;
+    font-size: 0.95rem;
+}
+
+.profile-since {
+    color: var(--ink-faint);
+    margin: 0;
+    font-size: 0.85rem;
+}
+
+/* ------------------------------------------------------------------ */
+/* Summary stats row                                                     */
+/* ------------------------------------------------------------------ */
+
+.stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+.stat-card {
+    background: var(--paper-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    align-items: flex-start;
+}
+
+.stat-value {
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    color: var(--ink);
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: var(--ink-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+/* ------------------------------------------------------------------ */
+/* Section shared styles                                                 */
+/* ------------------------------------------------------------------ */
+
+.profile-section {
+    background: var(--paper-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 1.75rem 2rem;
+}
+
+.section-title {
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    color: var(--ink);
+    margin: 0 0 1.25rem;
+}
+
+/* ------------------------------------------------------------------ */
+/* Transactions table                                                    */
+/* ------------------------------------------------------------------ */
+
+.table-wrapper {
+    overflow-x: auto;
+}
+
+.transactions-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.transactions-table th {
+    text-align: left;
+    color: var(--ink-muted);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0 0.75rem 0.75rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.transactions-table td {
+    padding: 0.85rem 0.75rem;
+    color: var(--ink-soft);
+    border-bottom: 1px solid var(--border-soft);
+}
+
+.transactions-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.col-date {
+    white-space: nowrap;
+    color: var(--ink-muted);
+    font-size: 0.85rem;
+}
+
+.col-amount {
+    text-align: right;
+    font-weight: 500;
+    color: var(--ink);
+}
+
+/* ------------------------------------------------------------------ */
+/* Category breakdown                                                    */
+/* ------------------------------------------------------------------ */
+
+.category-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+}
+
+.category-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.category-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.category-total {
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+    font-weight: 500;
+}
+
+.progress-bar-track {
+    height: 6px;
+    background: var(--paper-warm);
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    width: var(--pct);
+    border-radius: 999px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Category badge colours                                                */
+/* ------------------------------------------------------------------ */
+
+.badge {
+    display: inline-block;
+    padding: 0.25rem 0.7rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+.badge-food,
+.badge-health {
+    background: var(--accent-light);
+    color: var(--accent);
+}
+
+.badge-bills {
+    background: var(--danger-light);
+    color: var(--danger);
+}
+
+.badge-transport,
+.badge-entertainment,
+.badge-shopping {
+    background: var(--accent-2-light);
+    color: var(--accent-2);
+}
+
+.badge-other {
+    background: var(--border-soft);
+    color: var(--ink-muted);
+}
+
+/* progress bar fill inherits badge background via the same class */
+.progress-bar-fill.badge-food,
+.progress-bar-fill.badge-health {
+    background: var(--accent);
+}
+
+.progress-bar-fill.badge-bills {
+    background: var(--danger);
+}
+
+.progress-bar-fill.badge-transport,
+.progress-bar-fill.badge-entertainment,
+.progress-bar-fill.badge-shopping {
+    background: var(--accent-2);
+}
+
+.progress-bar-fill.badge-other {
+    background: var(--ink-faint);
+}
+
+/* ------------------------------------------------------------------ */
+/* Navbar: logged-in username                                            */
+/* ------------------------------------------------------------------ */
+
+.nav-username {
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+    font-weight: 500;
+}
+
+/* ------------------------------------------------------------------ */
+/* Responsive                                                            */
+/* ------------------------------------------------------------------ */
+
+@media (max-width: 640px) {
+    .stats-row {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
