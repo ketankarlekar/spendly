@@ -56,6 +56,7 @@ def login():
 
         session["user_id"] = user["id"]
         session["user_name"] = user["name"]
+        session["user_email"] = user["email"]
         return redirect(url_for("profile"))
 
     return render_template("login.html")
@@ -83,7 +84,42 @@ def logout():
 
 @app.route("/profile")
 def profile():
-    return "Profile page — coming in Step 4"
+    if not session.get("user_id"):
+        return redirect(url_for("login"))
+
+    name = session.get("user_name", "")
+    initials = "".join(part[0].upper() for part in name.split() if part)[:2]
+    user = {
+        "name": name,
+        "email": session.get("user_email", ""),
+        "member_since": "January 2024",
+        "initials": initials,
+    }
+
+    stats = {
+        "total_spent": 1284.50,
+        "transaction_count": 12,
+        "top_category": "Food",
+    }
+
+    transactions = [
+        {"date": "2024-01-15", "description": "Grocery run",     "category": "Food",          "amount": 87.30},
+        {"date": "2024-01-12", "description": "Bus pass",         "category": "Transport",     "amount": 45.00},
+        {"date": "2024-01-10", "description": "Electricity bill", "category": "Bills",         "amount": 120.00},
+        {"date": "2024-01-08", "description": "Gym membership",   "category": "Health",        "amount": 60.00},
+        {"date": "2024-01-05", "description": "Netflix",          "category": "Entertainment", "amount": 15.99},
+    ]
+
+    categories = [
+        {"name": "Food",          "total": 432.50, "percentage": 34},
+        {"name": "Bills",         "total": 310.00, "percentage": 24},
+        {"name": "Transport",     "total": 215.00, "percentage": 17},
+        {"name": "Health",        "total": 180.00, "percentage": 14},
+        {"name": "Entertainment", "total": 147.00, "percentage": 11},
+    ]
+
+    return render_template("profile.html", user=user, stats=stats,
+                           transactions=transactions, categories=categories)
 
 
 @app.route("/expenses/add")
