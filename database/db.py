@@ -84,3 +84,9 @@ def create_user(name, email, password):
     )
     db.commit()
     return db.execute('SELECT last_insert_rowid()').fetchone()[0]
+
+
+def get_user_by_email(email):
+    return get_db().execute(
+        'SELECT * FROM users WHERE email = ?', (email,)
+    ).fetchone()
