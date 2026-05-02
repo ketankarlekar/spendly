@@ -65,3 +65,22 @@ def seed_db():
         expenses
     )
     db.commit()
+
+
+def close_db(e=None):
+    db = g.pop('db', None)
+    if db is not None:
+        db.close()
+
+
+def create_user(name, email, password):
+    db = get_db()
+    existing = db.execute('SELECT id FROM users WHERE email = ?', (email,)).fetchone()
+    if existing:
+        return None
+    db.execute(
+        'INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)',
+        (name, email, generate_password_hash(password))
+    )
+    db.commit()
+    return db.execute('SELECT last_insert_rowid()').fetchone()[0]
