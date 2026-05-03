@@ -5,6 +5,10 @@ from flask import Flask, render_template, request, redirect, url_for, session
 from werkzeug.security import check_password_hash
 
 from database.db import get_db, init_db, seed_db, create_user, close_db, get_user_by_email
+from database.queries import (
+    get_user_by_id, get_summary_stats,
+    get_recent_transactions, get_category_breakdown,
+)
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "dev-secret-change-in-prod")
@@ -89,34 +93,19 @@ def profile():
 
     name = session.get("user_name", "")
     initials = "".join(part[0].upper() for part in name.split() if part)[:2]
+    db_user = get_user_by_id(session["user_id"])
     user = {
         "name": name,
         "email": session.get("user_email", ""),
-        "member_since": "January 2024",
+        "member_since": db_user["member_since"] if db_user else "",
         "initials": initials,
     }
 
-    stats = {
-        "total_spent": 1284.50,
-        "transaction_count": 12,
-        "top_category": "Food",
-    }
+    stats = get_summary_stats(session["user_id"])
 
-    transactions = [
-        {"date": "2024-01-15", "description": "Grocery run",     "category": "Food",          "amount": 87.30},
-        {"date": "2024-01-12", "description": "Bus pass",         "category": "Transport",     "amount": 45.00},
-        {"date": "2024-01-10", "description": "Electricity bill", "category": "Bills",         "amount": 120.00},
-        {"date": "2024-01-08", "description": "Gym membership",   "category": "Health",        "amount": 60.00},
-        {"date": "2024-01-05", "description": "Netflix",          "category": "Entertainment", "amount": 15.99},
-    ]
+    transactions = get_recent_transactions(session["user_id"])
 
-    categories = [
-        {"name": "Food",          "total": 432.50, "percentage": 34},
-        {"name": "Bills",         "total": 310.00, "percentage": 24},
-        {"name": "Transport",     "total": 215.00, "percentage": 17},
-        {"name": "Health",        "total": 180.00, "percentage": 14},
-        {"name": "Entertainment", "total": 147.00, "percentage": 11},
-    ]
+    categories = get_category_breakdown(session["user_id"])
 
     return render_template("profile.html", user=user, stats=stats,
                            transactions=transactions, categories=categories)
