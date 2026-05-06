@@ -1,7 +1,8 @@
 
+import datetime
 import os
 
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, flash, render_template, request, redirect, url_for, session
 from werkzeug.security import check_password_hash
 
 from database.db import get_db, init_db, seed_db, create_user, close_db, get_user_by_email
@@ -101,14 +102,46 @@ def profile():
         "initials": initials,
     }
 
-    stats = get_summary_stats(session["user_id"])
+    raw_from = request.args.get("date_from", "").strip()
+    raw_to = request.args.get("date_to", "").strip()
+    date_from = date_to = None
+    try:
+        if raw_from:
+            datetime.datetime.strptime(raw_from, "%Y-%m-%d")
+            date_from = raw_from
+        if raw_to:
+            datetime.datetime.strptime(raw_to, "%Y-%m-%d")
+            date_to = raw_to
+    except ValueError:
+        date_from = date_to = None
 
-    transactions = get_recent_transactions(session["user_id"])
+    if date_from and date_to and date_from > date_to:
+        flash("Start date must be before end date.")
+        date_from = date_to = None
 
-    categories = get_category_breakdown(session["user_id"])
+    today = datetime.date.today()
+    presets = {
+        "this_month": (today.replace(day=1).isoformat(), today.isoformat()),
+        "last_3_months": ((today - datetime.timedelta(days=90)).isoformat(), today.isoformat()),
+        "last_6_months": ((today - datetime.timedelta(days=180)).isoformat(), today.isoformat()),
+    }
+
+    active_preset = "all_time"
+    if date_from and date_to:
+        active_preset = "custom"
+        for preset_key, (pf, pt) in presets.items():
+            if date_from == pf and date_to == pt:
+                active_preset = preset_key
+                break
+
+    stats = get_summary_stats(session["user_id"], date_from, date_to)
+    transactions = get_recent_transactions(session["user_id"], date_from=date_from, date_to=date_to)
+    categories = get_category_breakdown(session["user_id"], date_from, date_to)
 
     return render_template("profile.html", user=user, stats=stats,
-                           transactions=transactions, categories=categories)
+                           transactions=transactions, categories=categories,
+                           date_from=date_from, date_to=date_to,
+                           presets=presets, active_preset=active_preset)
 
 
 @app.route("/expenses/add")
