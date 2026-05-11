@@ -1,7 +1,7 @@
 ---
 description: Seed realistic dummy expenses for a specific user
 argument-hint: "<user_id> <count> <months>"
-allowed-tools: Read, Bash(python3:*)
+allowed-tools: Read, Bash(python:*)
 ---
 
 Read database/db.py to understand the expenses table 
@@ -43,8 +43,8 @@ Write and run a Python script that:
    - Other: 50–1000
 3. Distributes categories roughly proportionally 
    (Food most common, Health and Entertainment least)
-4. Uses the db connection pattern from db.py — do not 
-   hardcode the database filename
+4. Connects via sqlite3.connect('spendly.db') directly —
+   do NOT use Flask's get_db() as there is no app context
 5. Uses parameterised queries only — no string formatting in SQL
 6. Inserts all expenses in a single transaction — 
    roll back everything if any insert fails
