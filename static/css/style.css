@@ -701,6 +701,16 @@ a { color: inherit; text-decoration: none; }
     color: var(--accent) !important;
 }
 
+.nav-add-btn {
+    background: var(--accent) !important;
+    color: var(--paper) !important;
+    padding: 0.45rem 1.1rem;
+    border-radius: var(--radius-sm);
+    transition: background 0.2s !important;
+}
+
+.nav-add-btn:hover { background: var(--ink) !important; }
+
 /* ------------------------------------------------------------------ */
 /* Responsive                                                          */
 /* ------------------------------------------------------------------ */
