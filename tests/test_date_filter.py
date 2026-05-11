@@ -332,7 +332,9 @@ class TestCustomDateRange:
         data = response.data.decode("utf-8", errors="replace")
         assert "150" in data, "April expense must appear in April custom range"
         assert "200" not in data, "March expense must be excluded from April custom range"
-        assert "100" not in data, "May expense must be excluded from April custom range"
+        # Use the formatted amount ₹100.00 — bare "100" also matches "--pct: 100%"
+        # in the progress bar when only one category is present.
+        assert "100.00" not in data, "May expense must be excluded from April custom range"
 
     def test_custom_range_active_preset_is_custom(self, app, client):
         _insert_user(app)
@@ -370,7 +372,9 @@ class TestCustomDateRange:
         data = response.data.decode("utf-8", errors="replace")
         assert "10" in data, "Expense on date_from boundary must be included"
         assert "20" in data, "Expense on date_to boundary must be included"
-        assert "30" not in data, "Expense one day after date_to must be excluded"
+        # "30" also appears as ₹30.00 total spent (10+20=30) and in the Google
+        # Fonts URL (wght@300). Check the excluded row's date instead.
+        assert "2025-03-01" not in data, "Expense one day after date_to must be excluded"
 
 
 # ------------------------------------------------------------------ #
@@ -619,6 +623,8 @@ class TestUserDataIsolation:
         _register_and_login(client, email="userb@example.com", password="testpass1")
         response = client.get("/profile?date_from=2025-01-01&date_to=2025-12-31")
         data = response.data.decode("utf-8", errors="replace")
-        assert "500" not in data, (
+        # "500" alone also matches "wght@300;400;500;600" in the Google Fonts URL.
+        # "Luxury" is a unique category name that only User A's expense carries.
+        assert "Luxury" not in data, (
             "User B must not see User A's expenses under any filter"
         )

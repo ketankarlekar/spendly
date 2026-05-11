@@ -90,3 +90,12 @@ def get_user_by_email(email):
     return get_db().execute(
         'SELECT * FROM users WHERE email = ?', (email,)
     ).fetchone()
+
+
+def create_expense(user_id, amount, category, date, description):
+    db = get_db()
+    db.execute(
+        'INSERT INTO expenses (user_id, amount, category, date, description) VALUES (?, ?, ?, ?, ?)',
+        (user_id, amount, category, date, description or None)
+    )
+    db.commit()

@@ -584,6 +584,127 @@ a { color: inherit; text-decoration: none; }
 /* Responsive                                                          */
 /* ------------------------------------------------------------------ */
 
+/* ------------------------------------------------------------------ */
+/* Analytics – Coming Soon                                             */
+/* ------------------------------------------------------------------ */
+
+.analytics-page {
+    min-height: calc(100vh - 60px - 100px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 2rem;
+}
+
+.analytics-card {
+    position: relative;
+    background: var(--paper-card);
+    border-radius: 28px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.06);
+    width: 570px;
+    max-width: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 61px 45px 96px;
+}
+
+.analytics-blob {
+    position: absolute;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: #efefef;
+    pointer-events: none;
+}
+
+.analytics-blob--tr {
+    top: -60px;
+    left: 420px;
+}
+
+.analytics-blob--bl {
+    top: 390px;
+    left: -50px;
+}
+
+.analytics-icon {
+    margin-bottom: 19px;
+    flex-shrink: 0;
+}
+
+.analytics-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #2c5a4c;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    border-radius: 18px;
+    padding: 0 16px;
+    height: 36px;
+    white-space: nowrap;
+    margin-bottom: 18px;
+}
+
+.analytics-heading {
+    font-family: var(--font-body);
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--ink);
+    text-align: center;
+    line-height: 1.22;
+    margin-bottom: 12px;
+    width: 480px;
+    max-width: 100%;
+}
+
+.analytics-body {
+    font-size: 16px;
+    color: #6b7075;
+    text-align: center;
+    line-height: 26px;
+    width: 430px;
+    max-width: 100%;
+    margin-bottom: 32px;
+}
+
+.analytics-dots {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.analytics-dot {
+    display: block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.analytics-dot--1 { background: #2c5a4c; }
+.analytics-dot--2 { background: #999ea3; }
+.analytics-dot--3 { background: #d0d5d9; }
+
+.analytics-subtitle {
+    font-size: 13px;
+    color: #999ea3;
+    text-align: center;
+    letter-spacing: 0.3px;
+}
+
+.nav-active {
+    color: var(--accent) !important;
+}
+
+/* ------------------------------------------------------------------ */
+/* Responsive                                                          */
+/* ------------------------------------------------------------------ */
+
 @media (max-width: 900px) {
     .hero {
         grid-template-columns: 1fr;

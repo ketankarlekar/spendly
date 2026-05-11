@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git diff*)",
+      "Bash(git diff --staged*)",
+      "Bash(git status*)",
+      "Bash(git branch*)",
+      "Bash(git checkout*)",
+      "Bash(git pull*)",
+      "Bash(git log*)",
+      "Bash(python -m pytest*)",
+      "Bash(python3*)",
+      "Bash(python*)"
+    ]
+  }
+}
