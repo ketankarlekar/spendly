@@ -106,7 +106,7 @@ expense-tracker/          ← project root (this file lives here)
 | 5 | `05-backend-routes-for-profile-page.md`| ✅ Complete |
 | 6 | `06-date-filter-for-profile-page.md`   | ✅ Complete |
 | 7 | `07-add-expense.md`                    | ✅ Complete |
-| 8 | edit-expense (not yet specced)         | ⬜ Pending  |
+| 8 | `08-edit-expense.md`                   | ✅ Complete |
 | 9 | delete-expense (not yet specced)       | ⬜ Pending  |
 
 ---
