@@ -1,17 +1,45 @@
-
 import datetime
 import os
 
-from flask import Flask, flash, render_template, request, redirect, url_for, session
+from flask import (
+    Flask,
+    abort,
+    flash,
+    render_template,
+    request,
+    redirect,
+    url_for,
+    session,
+)
 from werkzeug.security import check_password_hash
 
-from database.db import get_db, init_db, seed_db, create_user, close_db, get_user_by_email, create_expense
+from database.db import (
+    get_db,
+    init_db,
+    seed_db,
+    create_user,
+    close_db,
+    get_user_by_email,
+    create_expense,
+    get_expense_by_id,
+    update_expense,
+)
 from database.queries import (
-    get_user_by_id, get_summary_stats,
-    get_recent_transactions, get_category_breakdown,
+    get_user_by_id,
+    get_summary_stats,
+    get_recent_transactions,
+    get_category_breakdown,
 )
 
-EXPENSE_CATEGORIES = ["Food", "Transport", "Bills", "Health", "Entertainment", "Shopping", "Other"]
+EXPENSE_CATEGORIES = [
+    "Food",
+    "Transport",
+    "Bills",
+    "Health",
+    "Entertainment",
+    "Shopping",
+    "Other",
+]
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "dev-secret-change-in-prod")
@@ -21,6 +49,7 @@ app.teardown_appcontext(close_db)
 # ------------------------------------------------------------------ #
 # Routes                                                              #
 # ------------------------------------------------------------------ #
+
 
 @app.route("/")
 def landing():
@@ -83,6 +112,7 @@ def privacy():
 # Placeholder routes — students will implement these                  #
 # ------------------------------------------------------------------ #
 
+
 @app.route("/logout")
 def logout():
     session.clear()
@@ -124,8 +154,14 @@ def profile():
     today = datetime.date.today()
     presets = {
         "this_month": (today.replace(day=1).isoformat(), today.isoformat()),
-        "last_3_months": ((today - datetime.timedelta(days=90)).isoformat(), today.isoformat()),
-        "last_6_months": ((today - datetime.timedelta(days=180)).isoformat(), today.isoformat()),
+        "last_3_months": (
+            (today - datetime.timedelta(days=90)).isoformat(),
+            today.isoformat(),
+        ),
+        "last_6_months": (
+            (today - datetime.timedelta(days=180)).isoformat(),
+            today.isoformat(),
+        ),
     }
 
     active_preset = "all_time"
@@ -137,13 +173,22 @@ def profile():
                 break
 
     stats = get_summary_stats(session["user_id"], date_from, date_to)
-    transactions = get_recent_transactions(session["user_id"], date_from=date_from, date_to=date_to)
+    transactions = get_recent_transactions(
+        session["user_id"], date_from=date_from, date_to=date_to
+    )
     categories = get_category_breakdown(session["user_id"], date_from, date_to)
 
-    return render_template("profile.html", user=user, stats=stats,
-                           transactions=transactions, categories=categories,
-                           date_from=date_from, date_to=date_to,
-                           presets=presets, active_preset=active_preset)
+    return render_template(
+        "profile.html",
+        user=user,
+        stats=stats,
+        transactions=transactions,
+        categories=categories,
+        date_from=date_from,
+        date_to=date_to,
+        presets=presets,
+        active_preset=active_preset,
+    )
 
 
 @app.route("/analytics")
@@ -159,9 +204,9 @@ def add_expense():
         return redirect(url_for("login"))
 
     if request.method == "POST":
-        raw_amount  = request.form.get("amount", "").strip()
-        category    = request.form.get("category", "").strip()
-        raw_date    = request.form.get("date", "").strip()
+        raw_amount = request.form.get("amount", "").strip()
+        category = request.form.get("category", "").strip()
+        raw_date = request.form.get("date", "").strip()
         description = request.form.get("description", "").strip()
 
         error = None
@@ -200,12 +245,73 @@ def add_expense():
         return redirect(url_for("profile"))
 
     today = datetime.date.today().isoformat()
-    return render_template("add_expense.html", categories=EXPENSE_CATEGORIES, date=today)
+    return render_template(
+        "add_expense.html", categories=EXPENSE_CATEGORIES, date=today
+    )
 
 
-@app.route("/expenses/<int:id>/edit")
+@app.route("/expenses/<int:id>/edit", methods=["GET", "POST"])
 def edit_expense(id):
-    return "Edit expense — coming in Step 8"
+    if not session.get("user_id"):
+        return redirect(url_for("login"))
+
+    expense = get_expense_by_id(id)
+    if expense is None:
+        abort(404)
+    if expense["user_id"] != session["user_id"]:
+        abort(403)
+
+    if request.method == "POST":
+        raw_amount = request.form.get("amount", "").strip()
+        category = request.form.get("category", "").strip()
+        raw_date = request.form.get("date", "").strip()
+        description = request.form.get("description", "").strip()
+
+        error = None
+        amount = None
+        date = None
+
+        try:
+            amount = float(raw_amount)
+            if amount <= 0:
+                raise ValueError
+        except ValueError:
+            error = "Amount must be a positive number."
+
+        if not error and category not in EXPENSE_CATEGORIES:
+            error = "Please select a valid category."
+
+        if not error:
+            try:
+                datetime.datetime.strptime(raw_date, "%Y-%m-%d")
+                date = raw_date
+            except ValueError:
+                error = "Please enter a valid date."
+
+        if error:
+            return render_template(
+                "edit_expense.html",
+                error=error,
+                categories=EXPENSE_CATEGORIES,
+                expense=expense,
+                amount=raw_amount,
+                category=category,
+                date=raw_date,
+                description=description,
+            )
+
+        update_expense(id, amount, category, date, description)
+        return redirect(url_for("profile"))
+
+    return render_template(
+        "edit_expense.html",
+        categories=EXPENSE_CATEGORIES,
+        expense=expense,
+        amount=expense["amount"],
+        category=expense["category"],
+        date=expense["date"],
+        description=expense["description"] or "",
+    )
 
 
 @app.route("/expenses/<int:id>/delete")

@@ -420,3 +420,22 @@
     margin-left: auto;
     flex-shrink: 0;
 }
+
+.btn-edit {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: transparent;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background 0.2s, color 0.2s;
+}
+
+.btn-edit:hover {
+    background: var(--accent);
+    color: var(--paper-card);
+}
