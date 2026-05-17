@@ -439,3 +439,22 @@
     background: var(--accent);
     color: var(--paper-card);
 }
+
+.btn-delete {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: transparent;
+    color: var(--danger);
+    border: 1px solid var(--danger);
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.2s, color 0.2s;
+}
+
+.btn-delete:hover {
+    background: var(--danger);
+    color: var(--paper-card);
+}
