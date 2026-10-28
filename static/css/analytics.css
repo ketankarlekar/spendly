@@ -1,0 +1,79 @@
+/* ------------------------------------------------------------------ */
+/* Analytics page (builds on profile.css)                               */
+/* ------------------------------------------------------------------ */
+
+.analytics-title {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    color: var(--ink);
+    margin: 0;
+}
+
+.stats-row--four {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.stat-change {
+    font-size: 0.8rem;
+    color: var(--ink-muted);
+}
+
+.stat-change--up { color: var(--danger); }
+.stat-change--down { color: var(--accent); }
+
+/* 6-month trend ------------------------------------------------------ */
+
+.trend-chart {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1rem;
+}
+
+.trend-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.trend-track {
+    width: 100%;
+    max-width: 56px;
+    height: 160px;
+    display: flex;
+    align-items: flex-end;
+    background: var(--paper-warm);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+}
+
+.trend-bar {
+    width: 100%;
+    height: var(--pct);
+    background: var(--accent);
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+}
+
+.trend-value {
+    font-size: 0.8rem;
+    color: var(--ink-soft);
+}
+
+.trend-label {
+    font-size: 0.75rem;
+    color: var(--ink-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+@media (max-width: 900px) {
+    .stats-row--four { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 600px) {
+    .trend-chart { gap: 0.5rem; }
+    .trend-value { font-size: 0.7rem; }
+}
