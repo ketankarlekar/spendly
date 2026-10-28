@@ -30,6 +30,9 @@ from database.queries import (
     get_summary_stats,
     get_recent_transactions,
     get_category_breakdown,
+    get_monthly_totals,
+    get_top_expenses,
+    get_analytics_summary,
 )
 
 EXPENSE_CATEGORIES = [
@@ -45,6 +48,47 @@ EXPENSE_CATEGORIES = [
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "dev-secret-change-in-prod")
 app.teardown_appcontext(close_db)
+
+
+def _parse_date_filter():
+    raw_from = request.args.get("date_from", "").strip()
+    raw_to = request.args.get("date_to", "").strip()
+    date_from = date_to = None
+    try:
+        if raw_from:
+            datetime.datetime.strptime(raw_from, "%Y-%m-%d")
+            date_from = raw_from
+        if raw_to:
+            datetime.datetime.strptime(raw_to, "%Y-%m-%d")
+            date_to = raw_to
+    except ValueError:
+        date_from = date_to = None
+
+    if date_from and date_to and date_from > date_to:
+        flash("Start date must be before end date.")
+        date_from = date_to = None
+
+    today = datetime.date.today()
+    presets = {
+        "this_month": (today.replace(day=1).isoformat(), today.isoformat()),
+        "last_3_months": (
+            (today - datetime.timedelta(days=90)).isoformat(),
+            today.isoformat(),
+        ),
+        "last_6_months": (
+            (today - datetime.timedelta(days=180)).isoformat(),
+            today.isoformat(),
+        ),
+    }
+
+    active_preset = "all_time"
+    if date_from and date_to:
+        active_preset = "custom"
+        for preset_key, (pf, pt) in presets.items():
+            if date_from == pf and date_to == pt:
+                active_preset = preset_key
+                break
+    return date_from, date_to, presets, active_preset
 
 
 # ------------------------------------------------------------------ #
@@ -135,43 +179,7 @@ def profile():
         "initials": initials,
     }
 
-    raw_from = request.args.get("date_from", "").strip()
-    raw_to = request.args.get("date_to", "").strip()
-    date_from = date_to = None
-    try:
-        if raw_from:
-            datetime.datetime.strptime(raw_from, "%Y-%m-%d")
-            date_from = raw_from
-        if raw_to:
-            datetime.datetime.strptime(raw_to, "%Y-%m-%d")
-            date_to = raw_to
-    except ValueError:
-        date_from = date_to = None
-
-    if date_from and date_to and date_from > date_to:
-        flash("Start date must be before end date.")
-        date_from = date_to = None
-
-    today = datetime.date.today()
-    presets = {
-        "this_month": (today.replace(day=1).isoformat(), today.isoformat()),
-        "last_3_months": (
-            (today - datetime.timedelta(days=90)).isoformat(),
-            today.isoformat(),
-        ),
-        "last_6_months": (
-            (today - datetime.timedelta(days=180)).isoformat(),
-            today.isoformat(),
-        ),
-    }
-
-    active_preset = "all_time"
-    if date_from and date_to:
-        active_preset = "custom"
-        for preset_key, (pf, pt) in presets.items():
-            if date_from == pf and date_to == pt:
-                active_preset = preset_key
-                break
+    date_from, date_to, presets, active_preset = _parse_date_filter()
 
     stats = get_summary_stats(session["user_id"], date_from, date_to)
     transactions = get_recent_transactions(
@@ -196,7 +204,26 @@ def profile():
 def analytics():
     if not session.get("user_id"):
         return redirect(url_for("login"))
-    return render_template("analytics.html")
+    user_id = session["user_id"]
+    date_from, date_to, presets, active_preset = _parse_date_filter()
+
+    summary = get_analytics_summary(user_id, date_from, date_to)
+    monthly = get_monthly_totals(user_id)
+    peak = max(m["total"] for m in monthly)
+    for m in monthly:
+        m["pct"] = round(m["total"] / peak * 100) if peak else 0
+
+    return render_template(
+        "analytics.html",
+        summary=summary,
+        monthly=monthly,
+        categories=get_category_breakdown(user_id, date_from, date_to),
+        top_expenses=get_top_expenses(user_id, 5, date_from, date_to),
+        date_from=date_from,
+        date_to=date_to,
+        presets=presets,
+        active_preset=active_preset,
+    )
 
 
 @app.route("/expenses/add", methods=["GET", "POST"])

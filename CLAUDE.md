@@ -52,6 +52,7 @@ expense-tracker/          ← project root (this file lives here)
 │   ├── css/
 │   │   ├── style.css     ← global styles and CSS variables
 │   │   ├── profile.css
+│   │   ├── analytics.css
 │   │   └── landing.css
 │   └── js/
 │       └── main.js
@@ -61,7 +62,8 @@ expense-tracker/          ← project root (this file lives here)
 │   ├── test_backend_connection.py
 │   ├── test_date_filter.py
 │   ├── test_08-edit-expense.py
-│   └── test_delete_expense.py
+│   ├── test_delete_expense.py
+│   └── test_analytics.py
 └── .claude/
     ├── agents/           ← subagent definitions
     ├── commands/         ← slash command definitions
@@ -110,6 +112,7 @@ expense-tracker/          ← project root (this file lives here)
 | 7 | `07-add-expense.md`                    | ✅ Complete |
 | 8 | `08-edit-expense.md`                   | ✅ Complete |
 | 9 | `09-delete-expense.md`                 | ✅ Complete |
+| 10 | `10-analytics.md`                     | ✅ Complete |
 
 ---
 

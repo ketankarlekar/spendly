@@ -1,39 +1,138 @@
 {% extends "base.html" %}
 
-{% block title %}Analytics – Spendly{% endblock %}
+{% block title %}Analytics — Spendly{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/analytics.css') }}">
+{% endblock %}
 
 {% block content %}
-<div class="analytics-page">
-    <div class="analytics-card">
-        <div class="analytics-blob analytics-blob--tr"></div>
-        <div class="analytics-blob analytics-blob--bl"></div>
+<div class="profile-container">
 
-        <div class="analytics-icon">
-            <svg width="109" height="100" viewBox="0 0 109 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect width="109" height="100" rx="20" fill="#2c5a4c"/>
-                <circle cx="54.5" cy="50" r="18" stroke="rgba(255,255,255,0.35)" stroke-width="2.5"/>
-                <path d="M54.5 50 L54.5 32 A18 18 0 0 1 72.5 50 Z" fill="white"/>
-                <circle cx="54.5" cy="50" r="3" fill="white"/>
-            </svg>
+    <h1 class="analytics-title">Analytics</h1>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="flash-messages">
+            {% for msg in messages %}<p class="flash-error">{{ msg }}</p>{% endfor %}
         </div>
+        {% endif %}
+    {% endwith %}
 
-        <div class="analytics-badge">COMING SOON</div>
-
-        <h1 class="analytics-heading">Advanced Analytics</h1>
-
-        <p class="analytics-body">
-            We're working on powerful insights and
-            visualizations to help you understand your spending
-            patterns better.
-        </p>
-
-        <div class="analytics-dots">
-            <span class="analytics-dot analytics-dot--1"></span>
-            <span class="analytics-dot analytics-dot--2"></span>
-            <span class="analytics-dot analytics-dot--3"></span>
+    <div class="filter-bar">
+        <div class="filter-presets">
+            <a href="{{ url_for('analytics') }}"
+               class="filter-btn{% if active_preset == 'all_time' %} filter-btn--active{% endif %}">All Time</a>
+            <a href="{{ url_for('analytics', date_from=presets.this_month[0], date_to=presets.this_month[1]) }}"
+               class="filter-btn{% if active_preset == 'this_month' %} filter-btn--active{% endif %}">This Month</a>
+            <a href="{{ url_for('analytics', date_from=presets.last_3_months[0], date_to=presets.last_3_months[1]) }}"
+               class="filter-btn{% if active_preset == 'last_3_months' %} filter-btn--active{% endif %}">Last 3 Months</a>
+            <a href="{{ url_for('analytics', date_from=presets.last_6_months[0], date_to=presets.last_6_months[1]) }}"
+               class="filter-btn{% if active_preset == 'last_6_months' %} filter-btn--active{% endif %}">Last 6 Months</a>
         </div>
-
-        <p class="analytics-subtitle">We're crafting something special</p>
+        <form class="filter-custom" method="get" action="{{ url_for('analytics') }}">
+            <input type="date" name="date_from" value="{{ date_from or '' }}">
+            <span class="filter-sep">to</span>
+            <input type="date" name="date_to" value="{{ date_to or '' }}">
+            <button type="submit" class="filter-btn">Apply</button>
+        </form>
     </div>
+
+    <div class="stats-row stats-row--four">
+        <div class="stat-card">
+            <span class="stat-value">₹{{ "%.2f"|format(summary.total_spent) }}</span>
+            <span class="stat-label">Total Spent</span>
+            {% if summary.change_pct is not none %}
+            <span class="stat-change {% if summary.change_pct > 0 %}stat-change--up{% elif summary.change_pct < 0 %}stat-change--down{% endif %}">
+                {% if summary.change_pct > 0 %}▲{% elif summary.change_pct < 0 %}▼{% endif %}
+                {{ summary.change_pct|abs }}% vs previous period
+            </span>
+            {% endif %}
+        </div>
+        <div class="stat-card">
+            <span class="stat-value">₹{{ "%.2f"|format(summary.avg_per_day) }}</span>
+            <span class="stat-label">Average per Day</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-value">₹{{ "%.2f"|format(summary.avg_per_transaction) }}</span>
+            <span class="stat-label">Average per Transaction</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-value">{{ summary.transaction_count }}</span>
+            <span class="stat-label">Transactions</span>
+        </div>
+    </div>
+
+    {% if summary.transaction_count == 0 %}
+    <section class="profile-section">
+        <p class="empty-state">No expenses found for this period.</p>
+    </section>
+    {% endif %}
+
+    <section class="profile-section">
+        <h2 class="section-title">Last 6 Months</h2>
+        <ul class="trend-chart">
+            {% for m in monthly %}
+            <li class="trend-col">
+                <span class="trend-value">₹{{ "%.0f"|format(m.total) }}</span>
+                <div class="trend-track">
+                    <div class="trend-bar" style="--pct: {{ m.pct }}%"></div>
+                </div>
+                <span class="trend-label">{{ m.label }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+    </section>
+
+    <section class="profile-section">
+        <h2 class="section-title">Spending by Category</h2>
+        {% if categories %}
+        <ul class="category-list">
+            {% for cat in categories %}
+            <li class="category-row">
+                <div class="category-info">
+                    <span class="badge badge-{{ cat.name|lower }}">{{ cat.name }} · {{ cat.percentage }}%</span>
+                    <span class="category-total">₹{{ "%.2f"|format(cat.total) }}</span>
+                </div>
+                <div class="progress-bar-track">
+                    <div class="progress-bar-fill badge-{{ cat.name|lower }}" style="--pct: {{ cat.percentage }}%"></div>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="empty-state">No spending data for this period.</p>
+        {% endif %}
+    </section>
+
+    <section class="profile-section">
+        <h2 class="section-title">Top 5 Expenses</h2>
+        <div class="table-wrapper">
+            <table class="transactions-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Description</th>
+                        <th>Category</th>
+                        <th class="col-amount">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tx in top_expenses %}
+                    <tr>
+                        <td class="col-date">{{ tx.date }}</td>
+                        <td>{{ tx.description or "—" }}</td>
+                        <td><span class="badge badge-{{ tx.category|lower }}">{{ tx.category }}</span></td>
+                        <td class="col-amount">₹{{ "%.2f"|format(tx.amount) }}</td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="4" class="empty-state">No expenses found for this period.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
 </div>
 {% endblock %}
