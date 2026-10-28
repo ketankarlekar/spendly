@@ -440,6 +440,14 @@
     color: var(--paper-card);
 }
 
+.form-inline {
+    display: inline;
+}
+
+.col-actions {
+    white-space: nowrap;
+}
+
 .btn-delete {
     display: inline-block;
     padding: 0.25rem 0.75rem;
