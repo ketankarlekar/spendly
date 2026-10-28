@@ -59,7 +59,9 @@ expense-tracker/          ← project root (this file lives here)
 │   ├── conftest.py
 │   ├── test_register.py
 │   ├── test_backend_connection.py
-│   └── test_date_filter.py
+│   ├── test_date_filter.py
+│   ├── test_08-edit-expense.py
+│   └── test_delete_expense.py
 └── .claude/
     ├── agents/           ← subagent definitions
     ├── commands/         ← slash command definitions
@@ -107,7 +109,7 @@ expense-tracker/          ← project root (this file lives here)
 | 6 | `06-date-filter-for-profile-page.md`   | ✅ Complete |
 | 7 | `07-add-expense.md`                    | ✅ Complete |
 | 8 | `08-edit-expense.md`                   | ✅ Complete |
-| 9 | delete-expense (not yet specced)       | ⬜ Pending  |
+| 9 | `09-delete-expense.md`                 | ✅ Complete |
 
 ---
 

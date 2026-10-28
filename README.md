@@ -71,16 +71,19 @@ Built with Flask and SQLite.
 ## Project Structure
 
 ```
-spendly/
+expense-tracker/
 ├── app.py                  # Flask app and all routes
 ├── requirements.txt
+├── CLAUDE.md               # Project guide for Claude
 ├── database/
 │   ├── __init__.py
-│   └── db.py               # get_db(), init_db(), seed_db()
+│   ├── db.py               # get_db(), init_db(), seed_db(), CRUD helpers
+│   └── queries.py          # Read-only query helpers (stats, transactions)
 ├── static/
 │   ├── css/
-│   │   ├── style.css       # Global styles
-│   │   └── landing.css     # Landing page only
+│   │   ├── style.css       # Global styles and CSS variables
+│   │   ├── profile.css     # Profile page styles
+│   │   └── landing.css     # Landing page styles
 │   └── js/
 │       └── main.js
 ├── templates/
@@ -88,24 +91,29 @@ spendly/
 │   ├── landing.html
 │   ├── login.html
 │   ├── register.html
+│   ├── profile.html
+│   ├── add_expense.html
+│   ├── analytics.html
 │   ├── privacy.html
 │   └── terms.html
 └── tests/
-    └── conftest.py         # Pytest fixtures
+    ├── conftest.py             # Pytest fixtures
+    ├── test_register.py
+    ├── test_backend_connection.py
+    ├── test_date_filter.py
+    ├── test_08-edit-expense.py
+    └── test_delete_expense.py
 ```
 
 ## Running Tests
 
 ```bash
 # Run all tests
-pytest
+python -m pytest tests/ -v
 
 # Run a specific test file
-pytest tests/test_foo.py
+python -m pytest tests/test_delete_expense.py -v
 
 # Filter by test name
-pytest -k "test_login"
-
-# Show print output
-pytest -s
+python -m pytest -k "test_login" -v
 ```
